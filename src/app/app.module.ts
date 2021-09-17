@@ -6,18 +6,37 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
+import { StoreModule } from '@ngrx/store';
+import * as fromApp from './store/app.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { AuthEffects } from './auth/auth/store/auth.effects';
+import { TestEffects } from './auth/auth/store/test.effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { RecipeEffects } from './recipes/store/recipe.effects';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent, 
-  ],
+  declarations: [AppComponent, HeaderComponent],
   imports: [
     BrowserModule,
+    StoreRouterConnectingModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
+    EffectsModule.forRoot([AuthEffects, RecipeEffects]),
+    StoreModule.forRoot(fromApp.appReducer),
     SharedModule,
     CoreModule,
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+      autoPause: true,
+      features: {
+        pause: false,
+        lock: true,
+        persist: true,
+      },
+    }),
   ],
   bootstrap: [AppComponent],
 })
